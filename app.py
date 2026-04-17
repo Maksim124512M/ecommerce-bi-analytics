@@ -15,8 +15,8 @@ st.title('🚀 E-commerce Business Intelligence')
 st.markdown('Аналітична панель моніторингу товарів та прогнозів прибутку')
 
 # Filters
-categories_selectbox = st.selectbox('Select category:', set(df['category']))
-st.write('Category: ', categories_selectbox)
+categories_selectbox = st.selectbox('Обрати категорію:', set(df['category']))
+st.write('Категорія: ', categories_selectbox)
 
 col1, col2, col3 = st.columns(3)  # Create three columns for metrics
 
@@ -26,9 +26,9 @@ avg_product_rating_per_category = round(df.groupby('category')['rating'].mean(),
 out_of_stock = len(df[df['stock_qty'] < 10])
 
 # Display metrics in columns
-col1.metric('Total Revenue (Last 7d): ', total_revenue_last_7d)
-col2.metric(f'Avg Product Rating per {categories_selectbox}:  ', avg_product_rating_per_category[categories_selectbox])
-col3.metric('Out of Stock: ', out_of_stock)
+col1.metric('Весь прибуток за останні 7 днів: ', total_revenue_last_7d)
+col2.metric(f'Середній дохід по "{categories_selectbox}":  ', avg_product_rating_per_category[categories_selectbox])
+col3.metric('Немає в наявності: ', out_of_stock)
 
 # Visualizations
 fig = make_subplots(rows=2, cols=2,
