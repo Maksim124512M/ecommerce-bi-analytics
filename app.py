@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -34,28 +35,45 @@ col3.metric('Немає в наявності: ', out_of_stock)
 fig = make_subplots(rows=2, cols=2,
                     subplot_titles=('Ціна vs Продажі', 'Розподіл знижок', 'Виручка за категоріями', 'Прогноз виручки'))
 
+m, b = np.polyfit(df['price'], df['sales_last_7d'], 1)
+
 fig.add_trace(go.Scatter(
-    x=df['price'], y=df['sales_last_7d'], 
-    mode='markers', name='Продажі'
+    x=df['price'], y=df['sales_last_7d'], mode='markers', name='Товари'
+), row=1, col=1)
+
+fig.add_trace(go.Scatter(
+    x=df['price'], 
+    y=m*df['sales_last_7d'] + b, 
+    mode='lines', 
+    name='Тренд',
+    line=dict(color='red', width=3)
 ), row=1, col=1)
 
 fig.add_trace(go.Histogram(
     x=df['discount'], name='Знижки', 
-    marker_color='#EB89B5'
+    marker_color='#EB89B5',
 ), row=1, col=2)
 
 fig.add_trace(go.Bar(
     x=df['category'], y=df['revenue_last_7d'], 
-    name='Поточна'
+    name='Поточна',
 ), row=2, col=1)
 
 fig.add_trace(go.Bar(
     x=df['category'], y=df['revenue_next_7d'], 
-    name='Прогноз', marker_color='#3300FF'
+    name='Прогноз', marker_color='#3300FF',
 ), row=2, col=2)
 
-fig.update_layout(height=700, showlegend=False, 
-                  title_text='Комплексний аналіз продуктів')  # Adjust height and title
+fig.update_layout(
+    height=700, showlegend=False, 
+    title_text='Комплексний аналіз продуктів', bargap=0.3,
+)  # Adjust height and title
+fig.update_traces(
+    marker_line_color='rgb(255, 100, 200)',
+    marker_line_width=2,
+    opacity=0.85,
+    row=1, col=2
+)
 st.plotly_chart(fig, width='stretch')
 
 sort_by = st.selectbox('Sort by: ', df.columns)
